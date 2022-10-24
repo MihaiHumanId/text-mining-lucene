@@ -4,11 +4,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DS.TextMiningLuceneParser")]
+[assembly: AssemblyTitle("TextMining.Indexer")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("DS.TextMiningLuceneParser")]
+[assembly: AssemblyProduct("TextMining.Indexer")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("B1D028DB-24A7-4F06-BEB6-01ED84F421EF")]
+[assembly: Guid("9FD85314-A044-4571-BE1E-3D2C84AC381D")]
 
 // Version information for an assembly consists of the following four values:
 //
