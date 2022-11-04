@@ -1,46 +1,51 @@
 ﻿using System;
-using System.IO;
-using Lucene.Net.Analysis.Standard;
+using System.Linq;
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
+using TextMining.Indexer.Helpers;
 using TikaOnDotNet.TextExtraction;
-using Version = Lucene.Net.Util.Version;
 
 namespace TextMining.Indexer.Services;
 
 public class TextIndexerService : ITextIndexer
 {
     private readonly TextExtractor _textExtractor;
+
     public TextIndexerService()
     {
         _textExtractor = new TextExtractor();
     }
     
-    public Lucene.Net.Store.Directory IndexFiles(string filePath)
+    public void IndexFiles(string filePath)
     {
-        var directory = new RAMDirectory();
+        var directory = new SimpleFSDirectory($"{Helper.BasePath}/index");
 
-        using var analyzer = new StandardAnalyzer(Version.LUCENE_30);
-        using var writer = new IndexWriter(directory, analyzer, new IndexWriter.MaxFieldLength(1000));
+        var analyzer = new SimpleAnalyzer(LuceneVersion.LUCENE_48);
+        var indexConfig = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
+        using var writer = new IndexWriter(directory, indexConfig);
+        writer.DeleteAll();
 
-        foreach (var fileName in System.IO.Directory.EnumerateFiles(filePath))
+        var files = System.IO.Directory.EnumerateFiles(filePath);
+        foreach (var fileName in files)
         {
             var fileContent = ReadFile(fileName);
+            fileContent = Helper.CleanText(fileContent);
+            fileContent = Helper.RemoveStopWords(fileContent);
+            Console.WriteLine($"Document {fileName.Split('/').Last()} with content: {fileContent}");
             var document = new Document();
-
+        
             foreach (var token in fileContent.Split())
             {
-                document.Add(new Field("token", token, Field.Store.YES, Field.Index.ANALYZED));
+                document.Add(new TextField("token", token, Field.Store.YES));
             }
-
+            
             writer.AddDocument(document);
         }
-        
-        writer.Optimize();
-        writer.Flush(true, true, true);
-
-        return directory;
+        writer.Flush(triggerMerge: false, applyAllDeletes: false);
+        Console.WriteLine($"{files.Count()} files successfully indexed.");
     }
 
     private string ReadFile(string fileName)
@@ -51,7 +56,7 @@ public class TextIndexerService : ITextIndexer
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Failed to read document with Tika: {ex}");
+            Console.WriteLine($"Failed to read document {fileName} with Tika: {ex}");
             throw;
         }
     }

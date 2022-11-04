@@ -1,46 +1,41 @@
 ﻿using System;
-using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
+using Lucene.Net.Store;
+using TextMining.Indexer.Helpers;
 
 namespace TextMining.Searcher.Services;
 
 public class DocumentSearcherService : IDocumentSearcher
 {
-    public void SearchDocuments(Lucene.Net.Store.Directory index, string userQuery)
+    public void SearchDocuments(string userQuery)
     {
-        using var reader = IndexReader.Open(index, true);
-        using var searcher = new IndexSearcher(reader);
-        using var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
+        var fsDirectory = FSDirectory.Open($"{Helper.BasePath}/index");
+        var directoryReader = DirectoryReader.Open(fsDirectory);
 
-        var queryParser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "token", analyzer);
-        try
+        userQuery = Helper.CleanText(userQuery);
+        if (Helper.StopWords.Contains(userQuery))
         {
-            var query = queryParser.Parse(userQuery);
-            var collector = TopScoreDocCollector.Create(1000, true);
-            searcher.Search(query, collector);
-
-            var matches = collector.TopDocs().ScoreDocs;
-
-            foreach (var item in matches)
-            {
-                var documentId = item.Doc;
-                var document = searcher.Doc(documentId);
-
-                // var matchesInDocument = document.GetFields("token");
-                // foreach (var match in matchesInDocument)
-                // {
-                //     Console.WriteLine($"Match: {match.StringValue}");
-                // }
-                Console.WriteLine($"Match found in doc {documentId}");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-            throw;
+            Console.WriteLine($"Your query <{userQuery}> is a stop word. This kind of search yields no results.");
+            return;
         }
         
+        userQuery = Helper.RemoveStopWords(userQuery);
+        Console.WriteLine($"Your query after cleanup: {userQuery}");
+
+        var query = new MultiPhraseQuery
+        {
+            new Term("token", userQuery)
+        };
+        
+        var searcher = new IndexSearcher(directoryReader);
+        var hits = searcher.Search(query, 20).ScoreDocs;
+
+        foreach (var hit in hits)
+        {
+            var documentId = hit.Doc;
+            var document = searcher.Doc(documentId);
+            Console.WriteLine($"Match found in doc: {documentId}");
+        }
     }
 }

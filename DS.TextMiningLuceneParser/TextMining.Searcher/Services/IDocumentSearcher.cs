@@ -2,5 +2,5 @@
 
 public interface IDocumentSearcher
 {
-    void SearchDocuments(Lucene.Net.Store.Directory index, string query);
+    void SearchDocuments(string query);
 }

@@ -2,5 +2,5 @@
 
 public interface ITextIndexer
 {
-    Lucene.Net.Store.Directory IndexFiles(string filePath);
+    void IndexFiles(string filePath);
 }
