@@ -2,11 +2,11 @@
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using TextMining.Indexer.Helpers;
+using TextMining.App.Helpers;
 
-namespace TextMining.Searcher.Services;
+namespace TextMining.App.Services;
 
-public class DocumentSearcherService : IDocumentSearcher
+public class DocumentSearcherService
 {
     public void SearchDocuments(string userQuery)
     {
@@ -19,7 +19,7 @@ public class DocumentSearcherService : IDocumentSearcher
             Console.WriteLine($"Your query <{userQuery}> is a stop word. This kind of search yields no results.");
             return;
         }
-        
+
         userQuery = Helper.RemoveStopWords(userQuery);
         Console.WriteLine($"Your query after cleanup: {userQuery}");
 
@@ -27,7 +27,7 @@ public class DocumentSearcherService : IDocumentSearcher
         {
             new Term("token", userQuery)
         };
-        
+
         var searcher = new IndexSearcher(directoryReader);
         var hits = searcher.Search(query, 20).ScoreDocs;
 
