@@ -1,9 +1,11 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using TextMining.App.Services;
 
 namespace TextMining.App;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
@@ -24,13 +26,10 @@ internal class Program
             switch (option)
             {
                 case ConsoleOption.IndexFiles:
-                    textIndexerService.IndexFiles("../../../resources");
+                    textIndexerService.IndexFiles($"{Helpers.Helper.BasePath}/resources");
                     break;
                 case ConsoleOption.SearchFiles:
-                    Console.Write("Provide a query: ");
-                    var query = Console.ReadLine();
-                    // File.WriteAllText("../../../TextMining.Indexer/Helpers/query.txt", Console.Read().ToString());
-                    //var query = File.ReadAllText("../../../TextMining.Indexer/Helpers/query.txt");
+                    var query = File.ReadAllText($"{Helpers.Helper.BasePath}/TextMining.App/Helpers/query.txt", Encoding.UTF8);
                     documentSearcherService.SearchDocuments(query);
                     break;
                 case ConsoleOption.Exit:

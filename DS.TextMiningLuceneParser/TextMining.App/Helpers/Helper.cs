@@ -28,7 +28,7 @@ public static class Helper
     public static readonly string BasePath = "../../..";
 
     public static readonly List<string> StopWords = new(
-        File.ReadAllLines("../../../TextMining.App/Helpers/ro-stop-words.txt"));
+        File.ReadAllLines($"{BasePath}/TextMining.App/Helpers/ro-stop-words.txt"));
 
     public static string CleanText(string content)
     {
