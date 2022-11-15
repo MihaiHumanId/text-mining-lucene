@@ -468,7 +468,6 @@
         <Analyzer Include="..\packages\Lucene.Net.4.8.0-beta00016\analyzers\dotnet\cs\Lucene.Net.CodeAnalysis.CSharp.dll" />
     </ItemGroup>
     <ItemGroup>
-        <Content Include="Helpers\query.txt" />
         <Content Include="Helpers\ro-stop-words.txt" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

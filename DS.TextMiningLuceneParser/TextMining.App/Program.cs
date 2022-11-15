@@ -29,7 +29,7 @@ internal static class Program
                     textIndexerService.IndexFiles($"{Helpers.Helper.BasePath}/resources");
                     break;
                 case ConsoleOption.SearchFiles:
-                    var query = File.ReadAllText($"{Helpers.Helper.BasePath}/TextMining.App/Helpers/query.txt", Encoding.UTF8);
+                    var query = File.ReadAllText($"{Helpers.Helper.BasePath}/query.txt", Encoding.UTF8);
                     documentSearcherService.SearchDocuments(query);
                     break;
                 case ConsoleOption.Exit:
