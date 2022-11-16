@@ -15,7 +15,16 @@ public class DocumentSearcherService
     public void SearchDocuments(string userQuery)
     {
         var fsDirectory = FSDirectory.Open($"{Helper.BasePath}/index");
-        var directoryReader = DirectoryReader.Open(fsDirectory);
+        DirectoryReader directoryReader;
+        try
+        {
+            directoryReader = DirectoryReader.Open(fsDirectory);
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("There are no files inside the \"index\" directory. You should firstly run the indexing operation");
+            return;
+        }
 
         userQuery = Helper.CleanText(userQuery);
         if (Helper.StopWords.Contains(userQuery))
