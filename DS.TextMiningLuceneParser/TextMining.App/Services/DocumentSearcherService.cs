@@ -33,12 +33,15 @@ public class DocumentSearcherService
 
         var searcher = new IndexSearcher(directoryReader);
         var hits = searcher.Search(query, 20).ScoreDocs;
-
-        var documentNames = System.IO.Directory.EnumerateFiles($"{Helper.BasePath}/resources").ToList();
-        foreach (var hit in hits)
+        if (hits.Length > 0)
         {
-            var documentId = hit.Doc;
-            Console.WriteLine($"Match found in doc: {documentNames[documentId]} with score: {hit.Score}");
+            var documentNames = System.IO.Directory.EnumerateFiles($"{Helper.BasePath}/resources").ToList();
+            foreach (var hit in hits)
+            {
+                var documentId = hit.Doc;
+                Console.WriteLine($"Match found in doc: {documentNames[documentId]} with score: {hit.Score}");
+            }
         }
+        Console.WriteLine("No matches found for this query.");
     }
 }
